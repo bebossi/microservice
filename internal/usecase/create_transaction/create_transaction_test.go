@@ -23,6 +23,12 @@ type AccountGatewayMock struct {
 	mock.Mock
 }
 
+// UpdateBalance implements gateway.AccountGateway.
+func (m *AccountGatewayMock) UpdateBalance(account *entity.Account) error {
+	args := m.Called(account)
+	return args.Error(0)
+}
+
 // Get implements gateway.AccountGateway.
 func (m *AccountGatewayMock) Get(id string) (*entity.Account, error) {
 	panic("unimplemented")

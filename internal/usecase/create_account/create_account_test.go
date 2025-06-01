@@ -1,4 +1,4 @@
-package createaccount
+package create_account
 
 import (
 	"testing"
@@ -12,10 +12,14 @@ type AccountGatewayMock struct {
 	mock.Mock
 }
 
+func (m *AccountGatewayMock) UpdateBalance(account *entity.Account) error {
+	args := m.Called(account)
+	return args.Error(0)
+}
+
 type ClientGatewayMock struct {
 	mock.Mock
 }
-
 
 func (m *ClientGatewayMock) Save(client *entity.Client) error {
 	args := m.Called(client)
