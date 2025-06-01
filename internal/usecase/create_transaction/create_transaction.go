@@ -3,6 +3,7 @@ package create_transaction
 import (
 	"github.com/bebossi/microservice/internal/entity"
 	"github.com/bebossi/microservice/internal/gateway"
+	"github.com/bebossi/microservice/pkg/events"
 )
 
 type CreateTransactionInputDTO struct {
@@ -18,12 +19,21 @@ type CreateTransactionOutputDTO struct {
 type CreateTransactionUseCase struct {
 	TransactionGateway gateway.TransactionGateway
 	AccountGateway     gateway.AccountGateway
+	EventDispatcher    events.EventDispatcherInterface
+	TransactionCreated events.EventInterface
 }
 
-func NewCreateTransactionUseCase(transactionGateway gateway.TransactionGateway, accountGateway gateway.AccountGateway) *CreateTransactionUseCase {
+func NewCreateTransactionUseCase(
+	transactionGateway gateway.TransactionGateway,
+	 accountGateway gateway.AccountGateway, 
+	 eventDispatcher events.EventDispatcherInterface,
+	 transactionCreated events.EventInterface,
+	) *CreateTransactionUseCase {
 	return &CreateTransactionUseCase{
 		TransactionGateway: transactionGateway,
 		AccountGateway:     accountGateway,
+		EventDispatcher:    eventDispatcher,
+		TransactionCreated: transactionCreated,
 	}
 }
 
@@ -45,7 +55,12 @@ func (uc *CreateTransactionUseCase) Execute(input *CreateTransactionInputDTO) (*
 	if err != nil {
 		return nil, err
 	}
-	return &CreateTransactionOutputDTO{
+	output := &CreateTransactionOutputDTO{
 		ID: transaction.ID,
-	}, nil
+	}
+
+	uc.TransactionCreated.SetPayload(transaction)
+	uc.EventDispatcher.Dispatch(uc.TransactionCreated)
+
+	return output, nil
 }

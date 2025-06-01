@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/bebossi/microservice/internal/entity"
+	"github.com/bebossi/microservice/internal/event"
+	"github.com/bebossi/microservice/pkg/events"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -67,7 +69,10 @@ func TestCreateTransactionUseCase_Execute(t *testing.T) {
 		Amount:        100,
 	}
 
-	useCase := NewCreateTransactionUseCase(mockTransaction, mockAccount)
+	dispatcher := events.NewEventDispatcher()
+	event := event.NewTransactionCreated()
+
+	useCase := NewCreateTransactionUseCase(mockTransaction, mockAccount, dispatcher, event)
 	outputDto, err := useCase.Execute(inputDto)
 	assert.Nil(t, err)
 	assert.NotNil(t, outputDto)
