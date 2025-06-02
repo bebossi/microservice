@@ -58,7 +58,7 @@ func TestCreateAccountUseCase_Execute(t *testing.T) {
 	inputDto := &CreateAccountInputDTO{
 		ClientID: client.ID,
 	}
-	outputDto, err := useCase.Execute(inputDto)
+	outputDto, err := useCase.Execute(*inputDto)
 	assert.Nil(t, err)
 	assert.NotNil(t, outputDto)
 	assert.NotEmpty(t, outputDto.ID)

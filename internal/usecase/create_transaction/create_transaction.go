@@ -38,7 +38,7 @@ func NewCreateTransactionUseCase(
 }
 
 
-func (uc *CreateTransactionUseCase) Execute(input *CreateTransactionInputDTO) (*CreateTransactionOutputDTO, error) {
+func (uc *CreateTransactionUseCase) Execute(input CreateTransactionInputDTO) (*CreateTransactionOutputDTO, error) {
 	accountFrom, err := uc.AccountGateway.FindByClientID(input.AccountIDFrom)
 	if err != nil {
 		return nil, err
