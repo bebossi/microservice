@@ -1,13 +1,10 @@
-version: '3'
 services:
   mysql:
     image: mysql:5.7
     platform: linux/amd64
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: microservice
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: wallet
     ports:
       - 3306:3306
     volumes:
