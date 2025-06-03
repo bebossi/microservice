@@ -1,19 +1,21 @@
 package create_transaction
 
 import (
+	"fmt"
+
 	"github.com/bebossi/microservice/internal/entity"
 	"github.com/bebossi/microservice/internal/gateway"
 	"github.com/bebossi/microservice/pkg/events"
 )
 
 type CreateTransactionInputDTO struct {
-	AccountIDFrom string
-	AccountIDTo   string
-	Amount        float64
+	AccountIDFrom string `json:"account_id_from"`
+	AccountIDTo   string `json:"account_id_to"`
+	Amount        float64 `json:"amount"`
 }
 
 type CreateTransactionOutputDTO struct {
-	ID string
+	ID string `json:"id"`
 }
 
 type CreateTransactionUseCase struct {
@@ -41,18 +43,22 @@ func NewCreateTransactionUseCase(
 func (uc *CreateTransactionUseCase) Execute(input CreateTransactionInputDTO) (*CreateTransactionOutputDTO, error) {
 	accountFrom, err := uc.AccountGateway.FindByClientID(input.AccountIDFrom)
 	if err != nil {
+		fmt.Println("err find account from", err)
 		return nil, err
 	}
 	accountTo, err := uc.AccountGateway.FindByClientID(input.AccountIDTo)
 	if err != nil {
+		fmt.Println("err find account to", err)
 		return nil, err
 	}
 	transaction, err := entity.NewTransaction(accountFrom, accountTo, input.Amount)
 	if err != nil {
+		fmt.Println("err create transaction", err)
 		return nil, err
 	}
 	err = uc.TransactionGateway.Create(transaction)
 	if err != nil {
+		fmt.Println("err create transaction", err)
 		return nil, err
 	}
 	output := &CreateTransactionOutputDTO{

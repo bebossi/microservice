@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/bebossi/microservice/internal/entity"
 )
@@ -20,6 +21,7 @@ func(a *AccountDB) FindByClientID(clientID string) (*entity.Account, error) {
 	account.Client = &client
 	stmt, err := a.DB.Prepare("SELECT a.id, a.client_id, a.balance, a.created_at, a.updated_at, c.id, c.name, c.email, c.created_at, c.updated_at FROM accounts a INNER JOIN clients c ON a.client_id = c.id WHERE a.client_id = ?")
 	if err != nil {
+		fmt.Println("err find by client id", err)
 		return nil, err
 	}
 	defer stmt.Close()
@@ -29,6 +31,7 @@ func(a *AccountDB) FindByClientID(clientID string) (*entity.Account, error) {
 		&client.ID, &client.Name, &client.Email, &client.CreatedAt, &client.UpdatedAt,
 	)
 	if err != nil {
+		fmt.Println("err find by client id", err)
 		return nil, err
 	}
 
