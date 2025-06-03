@@ -29,7 +29,7 @@ func TestCreateClientUseCase_Execute(t *testing.T) {
 
 	useCase := NewCreateClientUseCase(m)
 
-	output, err := useCase.Execute(&CreateClientInputDTO{
+	output, err := useCase.Execute(CreateClientInputDTO{
 		Name:  "John Doe",
 		Email: "john.doe@example.com",
 	})

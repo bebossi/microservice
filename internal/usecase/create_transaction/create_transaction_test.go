@@ -77,11 +77,11 @@ func TestCreateTransactionUseCase_Execute(t *testing.T) {
 
 	dispatcher := events.NewEventDispatcher()
 	event := event.NewTransactionCreated()
-
 	useCase := NewCreateTransactionUseCase(mockTransaction, mockAccount, dispatcher, event)
-	outputDto, err := useCase.Execute(inputDto)
+	outputDto, err := useCase.Execute(*inputDto)
 	assert.Nil(t, err)
 	assert.NotNil(t, outputDto)
+	
 	assert.NotEmpty(t, outputDto.ID)
 	mockTransaction.AssertExpectations(t)
 	mockAccount.AssertExpectations(t)
