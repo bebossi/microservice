@@ -29,6 +29,7 @@ func (h *WebTransactionHandler) CreateTransaction(w http.ResponseWriter, r *http
 	if err != nil {
 		fmt.Println("err create transaction", err)
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -36,6 +37,7 @@ func (h *WebTransactionHandler) CreateTransaction(w http.ResponseWriter, r *http
 	if err != nil {
 		fmt.Println("err create transaction", err)
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
