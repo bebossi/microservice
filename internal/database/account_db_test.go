@@ -38,7 +38,7 @@ func TestAccountDBTestSuite (t *testing.T){
 	suite.Run(t, new(AccountDBTestSuite))
 }
 
-func (s *AccountDBTestSuite) TestFindByClientID() {
+func (s *AccountDBTestSuite) TestFindByID() {
     _, err := s.db.Exec("INSERT INTO clients (id, name, email, created_at, updated_at) VALUES (?, ?, ?, ?, ?)",
         s.client.ID, s.client.Name, s.client.Email, s.client.CreatedAt, s.client.UpdatedAt)
     s.NoError(err)
@@ -47,7 +47,7 @@ func (s *AccountDBTestSuite) TestFindByClientID() {
         "account-id-1", s.client.ID, 100.0, s.client.CreatedAt, s.client.UpdatedAt)
     s.NoError(err)
     
-    account, err := s.accountDB.FindByClientID(s.client.ID)
+    account, err := s.accountDB.FindByID(s.client.ID)
     s.NoError(err)
     s.NotNil(account)
     s.Equal(s.client.ID, account.Client.ID)

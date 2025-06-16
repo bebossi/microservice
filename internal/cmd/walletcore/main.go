@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 
@@ -12,6 +13,7 @@ import (
 	"github.com/bebossi/microservice/internal/web"
 	"github.com/bebossi/microservice/internal/web/webserver"
 	"github.com/bebossi/microservice/pkg/events"
+	"github.com/bebossi/microservice/pkg/uow"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -33,13 +35,23 @@ func main() {
 
 	clientDb := database.NewClientDB(db)
 	accountDb := database.NewAccountDB(db)
-	transactionDb := database.NewTransactionDB(db)
+	// transactionDb := database.NewTransactionDB(db)
+
+	ctx := context.Background()
+	uow := uow.NewUow(ctx, db)
+
+	uow.Register("AccountDB", func(tx *sql.Tx) interface{} {
+		return database.NewAccountDB(db)
+	})
+
+	uow.Register("TransactionDB", func(tx *sql.Tx) interface{} {
+		return database.NewTransactionDB(db)
+	})
 
 	createClientUseCase := create_client.NewCreateClientUseCase(clientDb)
 	createAccountUseCase := create_account.NewCreateAccountUseCase(accountDb, clientDb)
 	createTransactionUseCase := create_transaction.NewCreateTransactionUseCase(
-		transactionDb,
-		accountDb,
+		uow,
 		eventDispatcher,
 		transactionCreated,
 	)
@@ -53,6 +65,8 @@ func main() {
 	webServer.AddHandler("/clients", clientHandler.CreateClient)
 	webServer.AddHandler("/accounts", accountHandler.CreateAccount)
 	webServer.AddHandler("/transactions", transactionHandler.CreateTransaction)
+
+	fmt.Println("Server is starting on port 3000...")
 
 	webServer.Start()
 }

@@ -44,20 +44,28 @@ func NewCreateTransactionUseCase(
 
 func (uc *CreateTransactionUseCase) Execute(ctx context.Context, input CreateTransactionInputDTO) (*CreateTransactionOutputDTO, error) {
 	output := &CreateTransactionOutputDTO{}
+	fmt.Printf("Debug: Starting transaction creation with input: %+v\n", input)
 	err := uc.Uow.Do(ctx, func(_ *uow.Uow) error {
 		accountRepository := uc.getAccountRepository(ctx)
 		transactionRepository := uc.getTransactionRepository(ctx)
+        fmt.Printf("Debug: Finding account from: %s\n", input.AccountIDFrom)
 
-		accountFrom, err := accountRepository.FindByClientID(input.AccountIDFrom)
+		accountFrom, err := accountRepository.FindByID(input.AccountIDFrom)
 		if err != nil {
 			fmt.Println("err find account from", err)
 			return  err
 		}
-		accountTo, err := accountRepository.FindByClientID(input.AccountIDTo)
+		fmt.Printf("Debug: Found account from: %+v\n", accountFrom)
+
+		accountTo, err := accountRepository.FindByID(input.AccountIDTo)
+		fmt.Printf("Debug: Finding account to: %s\n", input.AccountIDTo)
+
 		if err != nil {
 			fmt.Println("err find account to", err)
 			return err
 		}
+		fmt.Printf("Debug: Found account to: %+v\n", accountTo)
+
 		transaction, err := entity.NewTransaction(accountFrom, accountTo, input.Amount)
 		if err != nil {
 			fmt.Println("err create transaction", err)
